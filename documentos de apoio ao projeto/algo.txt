@@ -1,0 +1,6 @@
+
+https://www.programiz.com/dsa/greedy-algorithm --> algoritmos de map pathing
+
+https://www.myrouteonline.com/blog/what-is-the-best-shortest-path-algorithm --> more algo.
+
+https://stackoverflow.com/questions/21964877/checking-adjacent-indices-in-2-dimensional-array --> adjacência
