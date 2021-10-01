@@ -27,6 +27,8 @@ void file_reader(char *file_name, int** maze)
         }
 
         mode_parcer(priority_cell, mode, maze);
+
+        allocated = true;
     }
 
     fclose(maze_in);
