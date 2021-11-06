@@ -1,4 +1,5 @@
 #include "projectHeader.h"
+#include "graph.h"
 
 /**
  * @brief Funçao de leitura dos ficheiros a analisar e alocaçao da matriz, funçao central, essencial ao funcionamento do programa
@@ -8,66 +9,50 @@
 void file_reader(char *file_name)
 {
     FILE *maze_in;
+    edge *discard;
+    int final_cell[2] = {0, 0}, i = 0, numbcell;
+    int coord_R = 0, coord_C = 0, colorCells = 0, cost = 0, size[2] = {0, 0};
     bool out_bounds = false;
-    int final_cell[2] = {0, 0}, i = 0, aux = 0;
-    int coord_R = 0, coord_C = 0, colorCells = 0, cost = 0, size[2] = {0, 0}, priority_cell[2] = {0, 0}; /*por ordem: coord a colocar na matriz, num de celulas com cor,*/
-    char mode[2];                                                                                        /*custo da cell, tamanho da matriz, cell a analisar*/
+                                                                                                        
 
     maze_in = fopen(file_name, "r");
     if (maze_in == NULL)
         exit(EXIT_FAILURE);
 
-    while ((aux = fscanf(maze_in, "%d %d %d %d %s", &size[0], &size[1], &priority_cell[0], &priority_cell[1], mode)) == 5)
-    {
-        out_bounds = false;
+    while ((fscanf(maze_in, "%d %d %d %d %d", &size[0], &size[1], &final_cell[0], &final_cell[1], &colorCells)) == 5){
 
-        if (is_out_bounds(priority_cell[0], priority_cell[1], size[0], size[1])) /*verificar se a celula inicial de facto pertence à matriz*/
-        {                                                                        /*a alocaçao só ocorre de seguida, o mesmo para a celula final*/
-            int result = -2;
-            print_to_file(result, file_name);
+        if (is_out_bounds(final_cell[0], final_cell[1], size[0], size[1])){
+            int result = -1;
+            /*print_to_file(result, file_name);*/
             out_bounds = true;
         }
-
-        if (strcmp(mode, "A6") == 0)
-        {
-            if (fscanf(maze_in, "%d %d", &final_cell[0], &final_cell[1]) != 2)
-                exit(EXIT_FAILURE);
-
-            if (is_out_bounds(final_cell[0], final_cell[1], size[0], size[1]) && out_bounds == false)
-            {
-                int result = -2;
-                print_to_file(result, file_name);
-                out_bounds = true;
-            }
-        }
-
-        if (fscanf(maze_in, "%d", &colorCells) != 1)
-            exit(EXIT_FAILURE);
-
+    
         if (out_bounds == true) /*salta para o fim da matriz*/
             advance_file(maze_in, colorCells);
 
-        else if (out_bounds == false) /*apenas iterar sobre as coordenadas se a célula inicial/final estiverem dentro da matriz*/
-        {
+        else if (out_bounds == false) {
+
             int **maze = allocate_matrix(size[0], size[1]);
+            discard = (edge*)malloc(sizeof(edge)*colorCells);
 
-            cell_placer(priority_cell[0], priority_cell[1], maze, cost); /*colocaçao da celula de partida*/
-
-            if (strcmp(mode, "A6") == 0)
-                cell_placer(final_cell[0], final_cell[1], maze, cost); /*colocaçao da celula de chegada, somente se A6 ativo*/
+            cell_placer(final_cell[0], final_cell[1], maze, cost); /*colocaçao da celula de partida*/
 
             for (i = 0; i < colorCells; i++)
             {
                 if (fscanf(maze_in, "%d %d %d", &coord_R, &coord_C, &cost) != 3)
                     exit(EXIT_FAILURE);
                  cell_placer(coord_R, coord_C, maze, cost);
+
+                 /**********************/
+                 discard[i].x = coord_R;
+                 discard[i].y = coord_C;
+                 discard[i].weigth = cost;
+                 /**********************/
             }
 
-            mode_parcer(priority_cell, final_cell, mode, maze, size[0], size[1], colorCells, file_name);
+            control(final_cell,maze,size[0],size[1],colorCells,file_name, discard);
             free_matrix(maze, size[0]);
         }
-        /*-----------------------------------reinicializaçao das variáveis-----------------------------------------------------*/
-        coord_R = 0, coord_C = 0, colorCells = 0, cost = 0, size[0] = 0, size[1] = 0, priority_cell[0] = 0, priority_cell[1] = 0;
     }
    
     fclose(maze_in);
