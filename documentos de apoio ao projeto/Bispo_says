@@ -1,7 +1,0 @@
-
-"O objectivo do projecto na sua fase final é encontrar caminhos entre a célula (1,1) e uma outra célula identificada no ficheiro de entrada. Pode acontecer que o caminho entre ambas se faça sem que seja necessário partir qualquer parede, caso ambas as células estejam na mesma sala.
-Mas pode acontecer que seja preciso partir paredes (células cinzentas) para passar de umas salas para outras, até se chegar ao objectivo. O enunciado do projecto esclarece quando se pode e quando não se pode partir uma parede. A variante A5 tem como objectivo verificar se uma dada célula, se for cinzenta, cumpre os requisitos para que se possa partir ou se se observa alguma das condições em que não se pode partir.
-Se se puder partir, é quebrável."
-
-
-Antes de aplicar o algoritmo Disktra verificar se as células se encontram no mesmo espaço, poupando assim complexidade de execução!!!
